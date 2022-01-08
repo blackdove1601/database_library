@@ -1,4 +1,3 @@
--- Вывод следующего читателя в очереди на данную книгу
 CREATE OR ALTER TRIGGER HeldBookReturned 
 ON TakenBook
 AFTER UPDATE
@@ -21,7 +20,7 @@ IF EXISTS (
 		DECLARE @PhoneNumber varchar(11) = (SELECT PhoneNumber FROM FirstReader(@IDBook))
 		DECLARE @Email varchar(25) = (SELECT Email FROM FirstReader(@IDBook))
 
-		PRINT 'Информация о следующем в очереди на данную книгу читателе'
+		PRINT 'РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃР»РµРґСѓСЋС‰РµРј РІ РѕС‡РµСЂРµРґРё РЅР° РґР°РЅРЅСѓСЋ РєРЅРёРіСѓ С‡РёС‚Р°С‚РµР»Рµ'
 		PRINT @Name
 		PRINT @PhoneNumber
 		PRINT @Email
@@ -29,7 +28,6 @@ IF EXISTS (
 GO
 
 
--- Обновляет статус о доступности книги
 CREATE OR ALTER TRIGGER BookWasTaken
 ON TakenBook
 AFTER INSERT
@@ -42,7 +40,6 @@ AS
 GO
 
 
--- Триггер на удаление отзыва
 CREATE OR ALTER TRIGGER DeleteReview
 ON vReviews
 INSTEAD OF DELETE
@@ -51,7 +48,7 @@ AS
 		IF NOT EXISTS(SELECT f.IDResponse FROM deleted AS d JOIN Feedback AS f ON f.IDResponse = d.IDResponse)
 		BEGIN	
 			ROLLBACK
-			RAISERROR('Отзыва по таким параметрам не существует' , 0, 0)
+			RAISERROR('РћС‚Р·С‹РІР° РїРѕ С‚Р°РєРёРј РїР°СЂР°РјРµС‚СЂР°Рј РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚' , 0, 0)
 		END
 		ELSE
 		BEGIN
@@ -65,7 +62,6 @@ AS
 GO
 
 
--- Триггер на обновление отзыва
 CREATE OR ALTER TRIGGER UpdateReview
 ON vReviews
 INSTEAD OF UPDATE
@@ -74,7 +70,7 @@ AS
 		IF NOT EXISTS(SELECT f.IDResponse FROM deleted AS d JOIN Feedback AS f ON f.IDResponse = d.IDResponse)
 		BEGIN
 			ROLLBACK
-			RAISERROR('Отзыва по таким параметрам не существует' , 0, 0)
+			RAISERROR('РћС‚Р·С‹РІР° РїРѕ С‚Р°РєРёРј РїР°СЂР°РјРµС‚СЂР°Рј РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚' , 0, 0)
 		END
 		ELSE
 		BEGIN
@@ -93,7 +89,7 @@ AS
 			ELSE 
 				BEGIN
 					ROLLBACK
-					RAISERROR('Нельзя изменить указанные данные' , 0, 0)
+					RAISERROR('РќРµР»СЊР·СЏ РёР·РјРµРЅРёС‚СЊ СѓРєР°Р·Р°РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ' , 0, 0)
 				END
 		END
 	END TRY
@@ -103,7 +99,6 @@ AS
 GO
 
 
--- Триггер на создание отзыва
 CREATE OR ALTER TRIGGER InsertReview
 ON vReviews
 INSTEAD OF INSERT
@@ -112,12 +107,12 @@ AS
 		IF EXISTS(SELECT InventoryNumber FROM inserted EXCEPT SELECT InventoryNumber FROM Book)
 		BEGIN	
 			ROLLBACK
-			RAISERROR('Такой книги в билиотеке нет' , 0, 0)
+			RAISERROR('РўР°РєРѕР№ РєРЅРёРіРё РІ Р±РёР»РёРѕС‚РµРєРµ РЅРµС‚' , 0, 0)
 		END
 		ELSE IF EXISTS(SELECT TicketNumber FROM inserted EXCEPT SELECT TicketNumber FROM Reader)
 		BEGIN	
 			ROLLBACK
-			RAISERROR('Такой читателя в билиотеке нет' , 0, 0)
+			RAISERROR('РўР°РєРѕР№ С‡РёС‚Р°С‚РµР»СЏ РІ Р±РёР»РёРѕС‚РµРєРµ РЅРµС‚' , 0, 0)
 		END
 		ELSE
 		BEGIN
