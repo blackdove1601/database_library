@@ -1,4 +1,3 @@
--- Возвращает имена всех авторов
 CREATE OR ALTER FUNCTION getAuthors(@IDBook int)
 RETURNS varchar(100)
 AS
@@ -30,7 +29,6 @@ END
 GO
 
 
--- Количество читателей
 CREATE OR ALTER FUNCTION getNumberOfReaders(@IDBook int)
 RETURNS int
 AS
@@ -45,7 +43,6 @@ END
 GO
 
 
--- Дата последнего обращения
 CREATE OR ALTER FUNCTION getLastTakenDate(@IDBook int)
 RETURNS date
 AS
@@ -60,7 +57,6 @@ END
 GO
 
 
--- Рейтинг книги
 CREATE OR ALTER FUNCTION getBookRaiting(@IDBook int)
 RETURNS float
 AS
@@ -75,7 +71,6 @@ END
 GO
 
 
--- Список очередей на книги данного автора
 CREATE OR ALTER FUNCTION BookQueue(@idauthor int)
 RETURNS TABLE
 AS
@@ -95,7 +90,6 @@ RETURN (
 GO
 
 
--- Очередь на данную книгу
 CREATE OR ALTER FUNCTION QueueForBook(@idbook int)
 RETURNS TABLE
 AS
@@ -113,7 +107,6 @@ RETURN  (
 GO
 
 
--- Информация о первом читателе в очереди на данную книгу
 CREATE OR ALTER FUNCTION FirstReader(@idbook int)
 RETURNS TABLE
 AS
