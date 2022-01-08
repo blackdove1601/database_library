@@ -1,10 +1,9 @@
--- Список должников
 CREATE OR ALTER VIEW vDebtors
 AS
 	SELECT
 		DISTINCT r.TicketNumber AS TicketNumber,
 		r.FirstName AS FirstName,
-		ISNULL(r.MiddleName, 'Отсутствует') AS MiddleName,
+		ISNULL(r.MiddleName, 'РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚') AS MiddleName,
 		r.LastName AS LastName,
 		r.PhoneNumber AS PhoneNumber
 	FROM TakenBook AS tb
@@ -15,7 +14,6 @@ AS
 GO
 
 
--- Рейтинг изданий
 CREATE OR ALTER VIEW vPublicationRating
 AS
 	SELECT
@@ -31,7 +29,6 @@ AS
 GO 
 
 
--- Отзывы читатателей
 CREATE OR ALTER VIEW vReviews
 AS
 	SELECT
@@ -51,7 +48,6 @@ AS
 GO
 
 
--- Количество обращений по категориям
 CREATE OR ALTER VIEW vNumberOfRequestsByCategory
 AS
 	SELECT
