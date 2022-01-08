@@ -1,4 +1,3 @@
--- Поиск по опреденным параметрам
 CREATE OR ALTER PROCEDURE SearchBy (
 	@chapter nvarchar(32),
 	@topic nvarchar(32), 
@@ -29,18 +28,17 @@ AS
 GO
 
 
--- Выдача книг
 CREATE OR ALTER PROCEDURE TakenForNWeeks
 	@ticketnumber int,
 	@idbook int,
 	@weeks int
 AS
 	IF @weeks <= 0
-		THROW 50001, 'Некорректное количество недель', 0
+		THROW 50001, 'РќРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРґРµР»СЊ', 0
 	IF NOT EXISTS(SELECT * FROM Reader WHERE @ticketnumber = TicketNumber)
-		THROW 50001, 'Читатель не записан', 0
+		THROW 50001, 'Р§РёС‚Р°С‚РµР»СЊ РЅРµ Р·Р°РїРёСЃР°РЅ', 0
 	IF NOT EXISTS(SELECT * FROM BookInfo WHERE @idbook = IDBook)
-		THROW 50001, 'Книга отстуствует в базе', 0
+		THROW 50001, 'РљРЅРёРіР° РѕС‚СЃС‚СѓСЃС‚РІСѓРµС‚ РІ Р±Р°Р·Рµ', 0
 
 	IF EXISTS(SELECT * FROM Book WHERE IsAvailable = 1 AND IDBook = @idbook)
 	   AND (NOT EXISTS(SELECT * FROM Hold WHERE IDBook = @idbook)
@@ -55,19 +53,16 @@ AS
 
 		DELETE FROM Hold
 		WHERE IDBook = @idbook AND TicketNumber = @ticketnumber
-
-		PRINT 'Книга выдана!'
 	END
 	ELSE
 	BEGIN
 		EXEC PutOnHold @idbook, @ticketnumber
-		DECLARE @message nvarchar(64) = 'Свободных копий нет! Читатель добавлен в очередь';
+		DECLARE @message nvarchar(64) = 'РЎРІРѕР±РѕРґРЅС‹С… РєРѕРїРёР№ РЅРµС‚! Р§РёС‚Р°С‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ РІ РѕС‡РµСЂРµРґСЊ';
 	    THROW 50001, @message, 0
 	END
 GO
 
 
--- Добавление в очередь
 CREATE OR ALTER PROCEDURE PutOnHold
 	@idbook int,
 	@ticketnumber int
@@ -77,20 +72,20 @@ AS
 	(@ticketnumber, @idbook, GETDATE())
 GO
 
--- Возврат книги
+
 CREATE OR ALTER PROCEDURE TakenBack
 	@ticketnumber int,
 	@inventorynumber int
 AS
 	IF NOT EXISTS(SELECT * FROM Reader WHERE @ticketnumber = TicketNumber)
-		THROW 50001, 'Читатель не записан', 0
+		THROW 50001, 'Р§РёС‚Р°С‚РµР»СЊ РЅРµ Р·Р°РїРёСЃР°РЅГ­', 0
 
 	IF NOT EXISTS(SELECT * FROM Book WHERE @inventorynumber = InventoryNumber)
-		THROW 50001, 'Книга не принадлежит библиотеке', 0
+		THROW 50001, 'РљРЅРёРіР° РЅРµ РїСЂРёРЅР°РґР»РµР¶РёС‚ Р±РёР±Р»РёРѕС‚РµРєРµ', 0
 
 	IF NOT EXISTS(SELECT * FROM TakenBook WHERE @ticketnumber = TicketNumber
-											AND @inventorynumber = InventoryNumber)
-		THROW 50001, 'Книга выдана другому читателю', 0
+						AND @inventorynumber = InventoryNumber)
+		THROW 50001, 'РљРЅРёРіР° РІС‹РґР°РЅР° РґСЂСѓРіРѕРјСѓ С‡РёС‚Р°С‚РµР»СЋ', 0
 
 	DECLARE @ontime int = 1
 	IF GETDATE() > (SELECT TOP 1 DeadLine FROM TakenBook WHERE @ticketnumber = TicketNumber
@@ -98,9 +93,9 @@ AS
 		SET @ontime = 0
 
 	IF @ontime = 1
-		PRINT 'Книга возвращена вовремя'
+		PRINT 'РљРЅРёРіР° РІРѕР·РІСЂР°С‰РµРЅР° РІРѕРІСЂРµРјСЏ'
 	ELSE
-		PRINT 'Книга возвращена с опозданием'
+		PRINT 'РљРЅРёРіР° РІРѕР·РІСЂР°С‰РµРЅР° СЃ РѕРїРѕР·РґР°РЅРёРµРј'
 
 	UPDATE TakenBook
 	SET OnTime = @ontime
